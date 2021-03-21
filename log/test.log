@@ -1,0 +1,892 @@
+  [1m[35m (245.8ms)[0m  [1m[35mDROP DATABASE IF EXISTS "db/bank_test"[0m
+  [1m[35m (532.9ms)[0m  [1m[35mCREATE DATABASE "db/bank_test" ENCODING = 'utf8'[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "account_users" CASCADE[0m
+  [1m[35m (61.2ms)[0m  [1m[35mCREATE TABLE "account_users" ("id" bigserial primary key, "user_id" bigint, "account_id" bigint, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "rule_id" bigint, "role_id" bigint)[0m
+  [1m[35m (58.8ms)[0m  [1m[35mCREATE  INDEX  "index_account_users_on_account_id" ON "account_users"  ("account_id")[0m
+  [1m[35m (61.4ms)[0m  [1m[35mCREATE  INDEX  "index_account_users_on_role_id" ON "account_users"  ("role_id")[0m
+  [1m[35m (61.6ms)[0m  [1m[35mCREATE  INDEX  "index_account_users_on_rule_id" ON "account_users"  ("rule_id")[0m
+  [1m[35m (61.7ms)[0m  [1m[35mCREATE  INDEX  "index_account_users_on_user_id" ON "account_users"  ("user_id")[0m
+  [1m[35m (0.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "accounts" CASCADE[0m
+  [1m[35m (64.6ms)[0m  [1m[35mCREATE TABLE "accounts" ("id" bigserial primary key, "iban" decimal(16), "balance" float, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (0.9ms)[0m  [1m[35mDROP TABLE IF EXISTS "invites" CASCADE[0m
+  [1m[35m (64.4ms)[0m  [1m[35mCREATE TABLE "invites" ("id" bigserial primary key, "account_id" bigint, "user_from_id" integer NOT NULL, "user_to_id" integer NOT NULL, "status" boolean, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (53.3ms)[0m  [1m[35mCREATE  INDEX  "index_invites_on_account_id" ON "invites"  ("account_id")[0m
+  [1m[35m (0.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "roles" CASCADE[0m
+  [1m[35m (98.3ms)[0m  [1m[35mCREATE TABLE "roles" ("id" bigserial primary key, "name" character varying)[0m
+  [1m[35m (0.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "rules" CASCADE[0m
+  [1m[35m (56.4ms)[0m  [1m[35mCREATE TABLE "rules" ("id" bigserial primary key, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "spending_limit" decimal(10,4))[0m
+  [1m[35m (0.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "transactions" CASCADE[0m
+  [1m[35m (95.4ms)[0m  [1m[35mCREATE TABLE "transactions" ("id" bigserial primary key, "user_id" bigint, "account_id" bigint, "remote_account_id" character varying, "summ" float, "status_from" boolean DEFAULT 't', "status_to" boolean DEFAULT 'f', "checkout_from" timestamp, "checkout_to" timestamp, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[35m (53.2ms)[0m  [1m[35mCREATE  INDEX  "index_transactions_on_account_id" ON "transactions"  ("account_id")[0m
+  [1m[35m (61.8ms)[0m  [1m[35mCREATE  INDEX  "index_transactions_on_user_id" ON "transactions"  ("user_id")[0m
+  [1m[35m (0.8ms)[0m  [1m[35mDROP TABLE IF EXISTS "users" CASCADE[0m
+  [1m[35m (93.4ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "name" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "sign_in_count" integer DEFAULT 0 NOT NULL, "current_sign_in_at" timestamp, "last_sign_in_at" timestamp, "current_sign_in_ip" inet, "last_sign_in_ip" inet, "confirmation_token" character varying, "confirmed_at" timestamp, "confirmation_sent_at" timestamp, "failed_attempts" integer DEFAULT 0 NOT NULL, "unlock_token" character varying, "locked_at" timestamp)[0m
+  [1m[35m (61.3ms)[0m  [1m[35mCREATE UNIQUE INDEX  "index_users_on_email" ON "users"  ("email")[0m
+  [1m[35m (61.7ms)[0m  [1m[35mCREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users"  ("reset_password_token")[0m
+  [1m[35m (7.4ms)[0m  [1m[35mALTER TABLE "account_users" ADD CONSTRAINT "fk_rails_f685686f18"
+FOREIGN KEY ("role_id")
+  REFERENCES "roles" ("id")
+[0m
+  [1m[35m (7.5ms)[0m  [1m[35mALTER TABLE "account_users" ADD CONSTRAINT "fk_rails_ddb5a473f7"
+FOREIGN KEY ("rule_id")
+  REFERENCES "rules" ("id")
+[0m
+  [1m[35m (114.3ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[35m (1.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (21.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20170802163422)[0m
+  [1m[35m (8.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES
+(20170724122346),
+(20170721101436),
+(20170731072708),
+(20170802161847),
+(20170802121418),
+(20170802161954),
+(20170802083958),
+(20170724114524),
+(20170802072828),
+(20170724140629),
+(20170802140351),
+(20170801154507),
+(20170724104631);
+
+[0m
+  [1m[35m (102.9ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (1.2ms)[0m  [1m[34mSELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.7ms)[0m  [1m[35mBEGIN[0m
+  [1m[35mSQL (1.2ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "key"[0m  [["key", "environment"], ["value", "test"], ["created_at", "2021-02-08 18:50:25.310849"], ["updated_at", "2021-02-08 18:50:25.310849"]]
+  [1m[35m (7.2ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.9ms)[0m  [1m[34mSELECT  "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.7ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCOMMIT[0m
+  [1m[35m (0.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.5ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.439858"], ["updated_at", "2021-02-08 18:50:25.439858"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$21cUh1rCe1fRXzgIs5XpKuzFKs23bFeE5sO4SagyNZoDvCuPdydhC"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#index as HTML
+  Rendering accounts/index.html.haml within layouts/application
+  Rendered accounts/index.html.haml within layouts/application (0.1ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 13ms (Views: 2.6ms | ActiveRecord: 0.8ms)
+  [1m[35m (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.463616"], ["updated_at", "2021-02-08 18:50:25.463616"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$b1t0vLSJf0S1ibLiSN8eR.IsMyVvDRuq9mL3F0639kQeorfzjrKpW"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#index as HTML
+  Rendering accounts/index.html.haml within layouts/application
+  Rendered accounts/index.html.haml within layouts/application (0.0ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.0ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.470015"], ["updated_at", "2021-02-08 18:50:25.470015"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$u5fLGqON9u.dG7TsuZe9AOM0GQOoYEvBjnyKZPD3TN1G9RAUJBEJi"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#new as HTML
+  Rendering accounts/new.html.haml within layouts/application
+  Rendered accounts/new.html.haml within layouts/application (0.1ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 7ms (Views: 0.5ms | ActiveRecord: 1.9ms)
+  [1m[35m (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.482055"], ["updated_at", "2021-02-08 18:50:25.482055"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$sRKWvmm/r.HlZ334XRu5PudvIXUuPybzLFYead4l8JIztAmP.19Ou"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#new as HTML
+  Rendering accounts/new.html.haml within layouts/application
+  Rendered accounts/new.html.haml within layouts/application (0.0ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.0ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.492193"], ["updated_at", "2021-02-08 18:50:25.492193"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$sEhlprIqL5uEpmS38ZG9tOgAUAzXMT6aK8Zk7jzMV1xUucMSjsu.K"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.494159"], ["updated_at", "2021-02-08 18:50:25.494159"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#show as HTML
+  Parameters: {"id"=>"1"}
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  Rendering accounts/show.html.haml within layouts/application
+  Rendered accounts/show.html.haml within layouts/application (0.1ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 6ms (Views: 0.5ms | ActiveRecord: 1.8ms)
+  [1m[35m (0.3ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.507266"], ["updated_at", "2021-02-08 18:50:25.507266"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$QBKdEsjwzCAh7IUZgGL.U.cUfEq/rKqAH0RVOoHmBHJO60xamNvW."]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.509041"], ["updated_at", "2021-02-08 18:50:25.509041"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#show as HTML
+  Parameters: {"id"=>"2"}
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  Rendering accounts/show.html.haml within layouts/application
+  Rendered accounts/show.html.haml within layouts/application (0.0ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.2ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.515359"], ["updated_at", "2021-02-08 18:50:25.515359"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$AE0Y5490GbfzF54jqVJ7rugYxFqfa1Nea66sNE/gugGnKsZjVIKH."]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.516996"], ["updated_at", "2021-02-08 18:50:25.516996"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#create as HTML
+  Parameters: {"account"=>"3"}
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 347133333155217], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.521339"], ["updated_at", "2021-02-08 18:50:25.521339"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRole Load (0.2ms)[0m  [1m[34mSELECT  "roles".* FROM "roles" WHERE "roles"."name" = $1 LIMIT $2[0m  [["name", "owner"], ["LIMIT", 1]]
+Completed 500 Internal Server Error in 5ms (ActiveRecord: 1.4ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.528593"], ["updated_at", "2021-02-08 18:50:25.528593"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$AMtOUFWcvQvI5YrZ6/1GROCnevV7xQ3XJ90/cXlNxAK6rq9hMkxMC"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.530317"], ["updated_at", "2021-02-08 18:50:25.530317"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#create as HTML
+  Parameters: {"account"=>"5"}
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 6011087206824014], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.532304"], ["updated_at", "2021-02-08 18:50:25.532304"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRole Load (0.2ms)[0m  [1m[34mSELECT  "roles".* FROM "roles" WHERE "roles"."name" = $1 LIMIT $2[0m  [["name", "owner"], ["LIMIT", 1]]
+Completed 500 Internal Server Error in 2ms (ActiveRecord: 0.7ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.538273"], ["updated_at", "2021-02-08 18:50:25.538273"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$5lCs/0MTabHOmUwnALK9WeyhTZMuayVydwLiJwBpmOi7Fv41.dqpi"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.540133"], ["updated_at", "2021-02-08 18:50:25.540133"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#destroy as HTML
+  Parameters: {"id"=>"7"}
+  [1m[36mAccount Load (0.3ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[31mDELETE FROM "accounts" WHERE "accounts"."id" = $1[0m  [["id", 7]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts
+Completed 302 Found in 2ms (ActiveRecord: 0.8ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.547948"], ["updated_at", "2021-02-08 18:50:25.547948"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$YUIgCNVmH/NeBBqBusgVvOmCVTKYLFRCsHrHrLt7U8gET68vNsOLG"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.549723"], ["updated_at", "2021-02-08 18:50:25.549723"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by AccountsController#destroy as HTML
+  Parameters: {"id"=>"8"}
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[31mDELETE FROM "accounts" WHERE "accounts"."id" = $1[0m  [["id", 8]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts
+Completed 302 Found in 2ms (ActiveRecord: 0.8ms)
+  [1m[36mAccount Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.556984"], ["updated_at", "2021-02-08 18:50:25.556984"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$G3t90LnbF/GBroYSGDtCwe8AQmFlbSTua10q3NCGJaCONKcEpJXo6"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.559891"], ["updated_at", "2021-02-08 18:50:25.559891"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$HteCAxd2TWcUNudkw0EkMeMF.RvRXe7RiY4BH7OMDl5cWUWEC7ja6"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.561555"], ["updated_at", "2021-02-08 18:50:25.561555"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#index as HTML
+  Parameters: {"account_id"=>"9"}
+  [1m[36mAccount Load (0.3ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 9], ["LIMIT", 1]]
+  Rendering invites/index.html.haml within layouts/application
+  Rendered invites/index.html.haml within layouts/application (0.3ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 4ms (Views: 1.7ms | ActiveRecord: 0.3ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.570754"], ["updated_at", "2021-02-08 18:50:25.570754"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$Rt.GnNjVIa11XGb.2HBEAekTdzML/kCupAh/EZPqGrqMHFf6f08ci"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.573561"], ["updated_at", "2021-02-08 18:50:25.573561"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$l0wlChAFa6dUeJuh63xM6etmK1dRAwCJaCBelkEaJlpxIiC2nvPPO"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.574858"], ["updated_at", "2021-02-08 18:50:25.574858"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#index as HTML
+  Parameters: {"account_id"=>"10"}
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 10], ["LIMIT", 1]]
+  Rendering invites/index.html.haml within layouts/application
+  Rendered invites/index.html.haml within layouts/application (0.0ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.2ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.580936"], ["updated_at", "2021-02-08 18:50:25.580936"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$95ziVY5olRHMC6AWL/3kmuxIxKd77JAIx5lkDRvY7tFq7tBfKJQJ."]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.583739"], ["updated_at", "2021-02-08 18:50:25.583739"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$qn8Q7aMUBH1WOtnb/47CH.8EEK8DFjK4x/eN1OqA61nIRUr0BuJVu"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.585063"], ["updated_at", "2021-02-08 18:50:25.585063"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#create as HTML
+  Parameters: {"invite"=>{"email"=>"user@mail.com"}, "account_id"=>"11"}
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 16], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 11], ["user_to_id", 16], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.3ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 11], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 16], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 11], ["user_to_id", 16], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 11], ["user_from_id", 15], ["user_to_id", 16], ["created_at", "2021-02-08 18:50:25.600479"], ["updated_at", "2021-02-08 18:50:25.600479"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/11/invites
+Completed 302 Found in 15ms (ActiveRecord: 2.9ms)
+  [1m[36mInvite Load (0.1ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."user_to_id" = $1 LIMIT $2[0m  [["user_to_id", 16], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.1ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.606027"], ["updated_at", "2021-02-08 18:50:25.606027"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$tQsqO4yRVDO9Sj9G6HcaseNHxhwT6J.t0pNHgkyQYNOSoln13uRDC"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.608767"], ["updated_at", "2021-02-08 18:50:25.608767"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$g4UeSXp37qYnL3XBRVienuC/fb6Nn/P6JtJqMGmhpqRULBkNj7Mu."]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.610081"], ["updated_at", "2021-02-08 18:50:25.610081"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#create as HTML
+  Parameters: {"invite"=>{"email"=>"user@mail.com"}, "account_id"=>"12"}
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 18], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 12], ["user_to_id", 18], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 12], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 18], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 12], ["user_to_id", 18], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 12], ["user_from_id", 17], ["user_to_id", 18], ["created_at", "2021-02-08 18:50:25.616185"], ["updated_at", "2021-02-08 18:50:25.616185"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/12/invites
+Completed 302 Found in 5ms (ActiveRecord: 1.8ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.620710"], ["updated_at", "2021-02-08 18:50:25.620710"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$ChgZv6QG5ayGBLANFVjn8u69h8D/fGt2p8Y4/3TbmbWJsUrhVDW4K"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.623416"], ["updated_at", "2021-02-08 18:50:25.623416"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$E7lwwgA690lFhvMkArzwmOKdfCFwmJ0I3uuxRKPMfWpnlLuHpRmpm"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.624684"], ["updated_at", "2021-02-08 18:50:25.624684"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#create as HTML
+  Parameters: {"invite"=>{"email"=>""}, "account_id"=>"13"}
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", ""], ["LIMIT", 1]]
+Redirected to http://test.host/accounts/13/invites
+Filter chain halted as :set_user_to_id rendered or redirected
+Completed 302 Found in 1ms (ActiveRecord: 0.3ms)
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "invites"[0m
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.633221"], ["updated_at", "2021-02-08 18:50:25.633221"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$in38bSfTEpj1TjeQ0iY9V.5hb9HSkOIrQtl.pWeIsA20WNGRlMaFW"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.636202"], ["updated_at", "2021-02-08 18:50:25.636202"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$ED8jgEuMZdgF8ssaM3ezbOZCVTDuQ5b7BRlcifGphXCe9dcjlFI2G"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.637705"], ["updated_at", "2021-02-08 18:50:25.637705"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#create as HTML
+  Parameters: {"invite"=>{"email"=>"me@example.com"}, "account_id"=>"14"}
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 21], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 14], ["user_to_id", 21], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 14], ["LIMIT", 1]]
+Redirected to http://test.host/accounts/14/invites
+Completed 302 Found in 3ms (ActiveRecord: 1.0ms)
+  [1m[36mInvite Load (0.2ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."user_from_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["user_from_id", 21], ["user_to_id", 22], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.647163"], ["updated_at", "2021-02-08 18:50:25.647163"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$b4QK2Gy2/YNkqOlrwSCqme6gCzFTaucFpp1EIeNeHgTW0BAaTzghm"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.650144"], ["updated_at", "2021-02-08 18:50:25.650144"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$CeCHb2Xp9PHxl5koH0Ja5u6PKgXFVIsf8IBCofM1TUXJm4s2t5CgO"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.651592"], ["updated_at", "2021-02-08 18:50:25.651592"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#create as HTML
+  Parameters: {"invite"=>{"email"=>"user@mail.com"}, "account_id"=>"15"}
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 24], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 15], ["user_to_id", 24], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.3ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 15], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 24], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.4ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 15], ["user_to_id", 24], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 15], ["user_from_id", 23], ["user_to_id", 24], ["created_at", "2021-02-08 18:50:25.658966"], ["updated_at", "2021-02-08 18:50:25.658966"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/15/invites
+Completed 302 Found in 7ms (ActiveRecord: 2.2ms)
+Processing by InvitesController#create as HTML
+  Parameters: {"invite"=>{"email"=>"user@mail.com"}, "account_id"=>"15"}
+  [1m[36mUser Load (0.3ms)[0m  [1m[34mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 24], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 15], ["user_to_id", 24], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.3ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 15], ["LIMIT", 1]]
+Redirected to http://test.host/accounts/15/invites
+Completed 302 Found in 273ms (ActiveRecord: 1.0ms)
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "invites" WHERE "invites"."user_to_id" = $1[0m  [["user_to_id", 24]]
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.938191"], ["updated_at", "2021-02-08 18:50:25.938191"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$7tViSZHUO5OlxiNy08NHw.mAFZmV7p6yN7OkcxsHimIb9MvpmX9ji"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.940997"], ["updated_at", "2021-02-08 18:50:25.940997"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$hLvFa20Bc1cJpZpc1Tb01efvmWFxeD0xeS6blblKVIFv.dLQa2mJS"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.942415"], ["updated_at", "2021-02-08 18:50:25.942415"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#create as HTML
+  Parameters: {"invite"=>{"email"=>"user123@mail.com"}, "account_id"=>"16"}
+  [1m[36mUser Load (0.2ms)[0m  [1m[34mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user123@mail.com"], ["LIMIT", 1]]
+Redirected to http://test.host/accounts/16/invites
+Filter chain halted as :set_user_to_id rendered or redirected
+Completed 302 Found in 1ms (ActiveRecord: 0.2ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.949107"], ["updated_at", "2021-02-08 18:50:25.949107"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$2EWJc8LWA2yX8gMnVKcfQOEI3o0ioAhvnQbIghpURoEswj2gu8CYG"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.952503"], ["updated_at", "2021-02-08 18:50:25.952503"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$bPmecl5nIGAhcLp4XuWgtOP7u2sVYY.UmOVro3.LDZPzfkWRs/w.K"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.953848"], ["updated_at", "2021-02-08 18:50:25.953848"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me55@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 1], ["created_at", "2021-02-08 18:50:25.956763"], ["updated_at", "2021-02-08 18:50:25.956763"], ["email", "me55@mail.ru"], ["encrypted_password", "$2a$04$JJ6JCWJjw8E8M0s.65lCruhyvQcM0dEAfsx3fNpgx/8T64kNK0WES"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me3@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 2], ["created_at", "2021-02-08 18:50:25.959411"], ["updated_at", "2021-02-08 18:50:25.959411"], ["email", "me3@mail.ru"], ["encrypted_password", "$2a$04$7Si6fulmcUS6Ja8yJ7t5T.sJCqsqAqKoj/SGfbRM0f8MkECGNyvCW"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.960782"], ["updated_at", "2021-02-08 18:50:25.960782"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 18], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.3ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 18], ["LIMIT", 1]]
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 18], ["user_from_id", 1], ["user_to_id", 2], ["created_at", "2021-02-08 18:50:25.965119"], ["updated_at", "2021-02-08 18:50:25.965119"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#update as HTML
+  Parameters: {"invite"=>{"status"=>"true"}, "id"=>"4", "account_id"=>"18"}
+  [1m[36mInvite Load (0.0ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[35m (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND ("invites"."id" != $2) AND "invites"."user_to_id" = $3 LIMIT $4[0m  [["account_id", 18], ["id", 4], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.0ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 18], ["LIMIT", 1]]
+  [1m[35mSQL (0.0ms)[0m  [1m[33mUPDATE "invites" SET "status" = $1, "updated_at" = $2 WHERE "invites"."id" = $3[0m  [["status", "t"], ["updated_at", "2021-02-18 00:00:00"], ["id", 4]]
+  [1m[35m (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRole Load (0.0ms)[0m  [1m[34mSELECT  "roles".* FROM "roles" WHERE "roles"."name" = $1 LIMIT $2[0m  [["name", "co-user"], ["LIMIT", 1]]
+Completed 500 Internal Server Error in 0ms (ActiveRecord: 0.0ms)
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.975975"], ["updated_at", "2021-02-08 18:50:25.975975"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$rKGzpXz.JAMmu3aSeaLJMenMuQqUYNrBwpgOKlicu/45EsSWC69Ty"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:25.978818"], ["updated_at", "2021-02-08 18:50:25.978818"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$AQvX9b.a8iqkp8CFOPd/ruUC7ZrVMUCRWTFPeid3axA5Se5dPVy/."]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.980214"], ["updated_at", "2021-02-08 18:50:25.980214"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me55@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 1], ["created_at", "2021-02-08 18:50:25.983259"], ["updated_at", "2021-02-08 18:50:25.983259"], ["email", "me55@mail.ru"], ["encrypted_password", "$2a$04$iLGTaO9DexpDF0u0GPgbt.lthVLo33eXUomDvXet9Y1wtMZ/TUo.y"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me3@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 2], ["created_at", "2021-02-08 18:50:25.985993"], ["updated_at", "2021-02-08 18:50:25.985993"], ["email", "me3@mail.ru"], ["encrypted_password", "$2a$04$63BEBdRz5RP4tArg.Gi8I.pksgQSN8lPZuUlltMLESKs5eKbY2R9K"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:25.987281"], ["updated_at", "2021-02-08 18:50:25.987281"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 20], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 20], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 20], ["user_from_id", 1], ["user_to_id", 2], ["created_at", "2021-02-08 18:50:25.990580"], ["updated_at", "2021-02-08 18:50:25.990580"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#update as HTML
+  Parameters: {"invite"=>{"status"=>"true"}, "id"=>"5", "account_id"=>"20"}
+  [1m[36mInvite Load (0.0ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[35m (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND ("invites"."id" != $2) AND "invites"."user_to_id" = $3 LIMIT $4[0m  [["account_id", 20], ["id", 5], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.0ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 20], ["LIMIT", 1]]
+  [1m[35mSQL (0.0ms)[0m  [1m[33mUPDATE "invites" SET "status" = $1, "updated_at" = $2 WHERE "invites"."id" = $3[0m  [["status", "t"], ["updated_at", "2021-02-18 00:00:00"], ["id", 5]]
+  [1m[35m (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRole Load (0.0ms)[0m  [1m[34mSELECT  "roles".* FROM "roles" WHERE "roles"."name" = $1 LIMIT $2[0m  [["name", "co-user"], ["LIMIT", 1]]
+Completed 500 Internal Server Error in 0ms (ActiveRecord: 0.0ms)
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.001916"], ["updated_at", "2021-02-08 18:50:26.001916"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$XtBTWnOaFpQsUn71yvzMLuN/jBMpREzeoLynVsHNLMvdiq0DnRTuC"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.004689"], ["updated_at", "2021-02-08 18:50:26.004689"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$eRj7/dOjCixcekAGluADwuKFqQXqqPSMrXYN9zZ/UMvc.ceEwVPG."]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.006049"], ["updated_at", "2021-02-08 18:50:26.006049"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me55@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 1], ["created_at", "2021-02-08 18:50:26.008981"], ["updated_at", "2021-02-08 18:50:26.008981"], ["email", "me55@mail.ru"], ["encrypted_password", "$2a$04$n.VaNVHx3QPJak6/2X8imOsKNvZMM.XQRtOPE7YF8mQDvObuagm22"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me3@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 2], ["created_at", "2021-02-08 18:50:26.011679"], ["updated_at", "2021-02-08 18:50:26.011679"], ["email", "me3@mail.ru"], ["encrypted_password", "$2a$04$zqFpm8g8Pz2RCfQh7YiqseG/hj0COe6DD1HwzQlY6NivtAnt0cK1C"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.012996"], ["updated_at", "2021-02-08 18:50:26.012996"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 22], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 22], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 22], ["user_from_id", 1], ["user_to_id", 2], ["created_at", "2021-02-08 18:50:26.016191"], ["updated_at", "2021-02-08 18:50:26.016191"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#update as HTML
+  Parameters: {"invite"=>{"status"=>"false"}, "id"=>"6", "account_id"=>"22"}
+  [1m[36mInvite Load (0.0ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[35m (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND ("invites"."id" != $2) AND "invites"."user_to_id" = $3 LIMIT $4[0m  [["account_id", 22], ["id", 6], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.0ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 22], ["LIMIT", 1]]
+  [1m[35m (0.0ms)[0m  [1m[31mROLLBACK TO SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts
+Completed 302 Found in 0ms (ActiveRecord: 0.0ms)
+  [1m[36mInvite Load (0.0ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.3ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.025758"], ["updated_at", "2021-02-08 18:50:26.025758"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$owtmyEWTAMKZBspOstYP8eGyCOsd/I4TLHOLNKWcXjCAw6NOz1nky"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.029471"], ["updated_at", "2021-02-08 18:50:26.029471"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$E98N/gTjzyBdShh/mpZi3uKrA0QDUhc1SG48mZ9.UUPokeP0xmkri"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.030878"], ["updated_at", "2021-02-08 18:50:26.030878"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.1ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me55@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 1], ["created_at", "2021-02-08 18:50:26.033761"], ["updated_at", "2021-02-08 18:50:26.033761"], ["email", "me55@mail.ru"], ["encrypted_password", "$2a$04$MvhdvbMEsyxgTSrfYLNdrOS4S/5DLcTbJMp5KUPPoShJGBhzC9Cd6"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me3@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 2], ["created_at", "2021-02-08 18:50:26.036454"], ["updated_at", "2021-02-08 18:50:26.036454"], ["email", "me3@mail.ru"], ["encrypted_password", "$2a$04$SmW8BFgefbNc8DFcalBWWushBnOPVPapNIuV1BWZELDCW.bICozXu"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.037815"], ["updated_at", "2021-02-08 18:50:26.037815"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 24], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 24], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 24], ["user_from_id", 1], ["user_to_id", 2], ["created_at", "2021-02-08 18:50:26.040946"], ["updated_at", "2021-02-08 18:50:26.040946"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#update as HTML
+  Parameters: {"invite"=>{"status"=>"true"}, "id"=>"7", "account_id"=>"24"}
+  [1m[36mInvite Load (0.0ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[35m (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND ("invites"."id" != $2) AND "invites"."user_to_id" = $3 LIMIT $4[0m  [["account_id", 24], ["id", 7], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.0ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 24], ["LIMIT", 1]]
+  [1m[35mSQL (0.0ms)[0m  [1m[33mUPDATE "invites" SET "status" = $1, "updated_at" = $2 WHERE "invites"."id" = $3[0m  [["status", "t"], ["updated_at", "2021-02-18 00:00:00"], ["id", 7]]
+  [1m[35m (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRole Load (0.0ms)[0m  [1m[34mSELECT  "roles".* FROM "roles" WHERE "roles"."name" = $1 LIMIT $2[0m  [["name", "co-user"], ["LIMIT", 1]]
+Completed 500 Internal Server Error in 0ms (ActiveRecord: 0.0ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.051089"], ["updated_at", "2021-02-08 18:50:26.051089"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$iebEpC91UQ6EymP2YvqeDuEBccN8bb7UCMnFsnjntFNQTEozeUJOS"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.053845"], ["updated_at", "2021-02-08 18:50:26.053845"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$6JMoirHVFtPOtvbyFNrtIOQjEjp6oP9Qgx781dGGP4C6M.k1gk8dS"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.055457"], ["updated_at", "2021-02-08 18:50:26.055457"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me55@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 1], ["created_at", "2021-02-08 18:50:26.059400"], ["updated_at", "2021-02-08 18:50:26.059400"], ["email", "me55@mail.ru"], ["encrypted_password", "$2a$04$BrDgsOwzxhlRe3q.fGXs0eD4uiLtzLvn2AqW/igVEhxBxCn1wQZeW"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me3@mail.ru"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("id", "created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["id", 2], ["created_at", "2021-02-08 18:50:26.062382"], ["updated_at", "2021-02-08 18:50:26.062382"], ["email", "me3@mail.ru"], ["encrypted_password", "$2a$04$ERAz7iE0Jn3NpOpgor94UO7PsTIoCLJzJA4JIzzECXgFNJeoEV45W"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.063767"], ["updated_at", "2021-02-08 18:50:26.063767"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 26], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 26], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 26], ["user_from_id", 1], ["user_to_id", 2], ["created_at", "2021-02-08 18:50:26.067060"], ["updated_at", "2021-02-08 18:50:26.067060"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#update as HTML
+  Parameters: {"invite"=>{"status"=>""}, "id"=>"8", "account_id"=>"26"}
+  [1m[36mInvite Load (0.0ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[35m (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.0ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND ("invites"."id" != $2) AND "invites"."user_to_id" = $3 LIMIT $4[0m  [["account_id", 26], ["id", 8], ["user_to_id", 2], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.0ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 26], ["LIMIT", 1]]
+  [1m[35m (0.0ms)[0m  [1m[31mROLLBACK TO SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts
+Completed 302 Found in 0ms (ActiveRecord: 0.0ms)
+  [1m[36mInvite Load (0.0ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.076037"], ["updated_at", "2021-02-08 18:50:26.076037"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$W4A23jDvHWv5Ish0xG4RK.vdkUd2T4KktqN98IEeSWYMR3HStPYRq"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@mail.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.078820"], ["updated_at", "2021-02-08 18:50:26.078820"], ["email", "user@mail.com"], ["encrypted_password", "$2a$04$Ego9RowEYe2GgXsb1sy/beTuguYAWyVVZnLS/hLtNKXjQUU83ptn2"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.080144"], ["updated_at", "2021-02-08 18:50:26.080144"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."id" = $1 LIMIT $2[0m  [["id", 38], ["LIMIT", 1]]
+  [1m[36mInvite Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."account_id" = $1 AND "invites"."user_to_id" = $2 LIMIT $3[0m  [["account_id", 27], ["user_to_id", 38], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 27], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "invites" ("account_id", "user_from_id", "user_to_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["account_id", 27], ["user_from_id", 37], ["user_to_id", 38], ["created_at", "2021-02-08 18:50:26.083540"], ["updated_at", "2021-02-08 18:50:26.083540"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by InvitesController#destroy as HTML
+  Parameters: {"account_id"=>"27", "id"=>"9"}
+  [1m[36mInvite Load (0.3ms)[0m  [1m[34mSELECT  "invites".* FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[31mDELETE FROM "invites" WHERE "invites"."id" = $1[0m  [["id", 9]]
+Redirected to http://test.host/accounts
+Completed 302 Found in 2ms (ActiveRecord: 0.5ms)
+  [1m[36mInvite Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "invites" WHERE "invites"."id" = $1 LIMIT $2[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.091501"], ["updated_at", "2021-02-08 18:50:26.091501"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$opCm5GkNrmtpT5cqMsuON.WleDZYuscMBfFmKE/VO4HwgPVkWVyKi"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.093194"], ["updated_at", "2021-02-08 18:50:26.093194"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#index as HTML
+  Parameters: {"account_id"=>"28"}
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 28], ["LIMIT", 1]]
+  Rendering rules/index.html.haml within layouts/application
+  Rendered rules/index.html.haml within layouts/application (0.1ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 4ms (Views: 1.1ms | ActiveRecord: 0.2ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.102102"], ["updated_at", "2021-02-08 18:50:26.102102"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$DPC1FjgGiL0sc/LZFsx0PeZLWIuEYokp0vdALz3Br0dFSUZSDsJKa"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.103827"], ["updated_at", "2021-02-08 18:50:26.103827"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#index as HTML
+  Parameters: {"account_id"=>"29"}
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 29], ["LIMIT", 1]]
+  Rendering rules/index.html.haml within layouts/application
+  Rendered rules/index.html.haml within layouts/application (0.0ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.2ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.109842"], ["updated_at", "2021-02-08 18:50:26.109842"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$KPqtokC4nun8mESGlcghkODz./ojjlR6o81Sbcn0JnvbGxpgUM0l."]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.111714"], ["updated_at", "2021-02-08 18:50:26.111714"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#new as HTML
+  Parameters: {"account_id"=>"30"}
+  Rendering rules/new.html.haml within layouts/application
+  Rendered rules/new.html.haml within layouts/application (0.1ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 9ms (Views: 0.6ms | ActiveRecord: 1.4ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.125667"], ["updated_at", "2021-02-08 18:50:26.125667"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$UGXhMh8klqIFiAG5J0TjfeaLKbFy7wYKzjDNHs4Rlo7q1PRiPsrgm"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.127318"], ["updated_at", "2021-02-08 18:50:26.127318"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#new as HTML
+  Parameters: {"account_id"=>"31"}
+  Rendering rules/new.html.haml within layouts/application
+  Rendered rules/new.html.haml within layouts/application (0.0ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 1ms (Views: 0.4ms | ActiveRecord: 0.0ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.132863"], ["updated_at", "2021-02-08 18:50:26.132863"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$dvfSdEYvhfDKINdWsnc18eWyS47ZcgTE2myVQ5uUsb.h5v69v5Ouq"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.134592"], ["updated_at", "2021-02-08 18:50:26.134592"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "rules" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.135960"], ["updated_at", "2021-02-08 18:50:26.135960"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#edit as HTML
+  Parameters: {"account_id"=>"32", "id"=>"1"}
+  [1m[36mRule Load (0.2ms)[0m  [1m[34mSELECT  "rules".* FROM "rules" WHERE "rules"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  Rendering rules/edit.html.haml within layouts/application
+  Rendered rules/edit.html.haml within layouts/application (0.1ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 2ms (Views: 0.5ms | ActiveRecord: 0.2ms)
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.142443"], ["updated_at", "2021-02-08 18:50:26.142443"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$R5spvdEsuvmT1iFcSegqi.7Or0Auc/jzJD95RlLIxoIUACbypSwPS"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.144076"], ["updated_at", "2021-02-08 18:50:26.144076"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "rules" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.145355"], ["updated_at", "2021-02-08 18:50:26.145355"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#edit as HTML
+  Parameters: {"account_id"=>"33", "id"=>"2"}
+  [1m[36mRule Load (0.2ms)[0m  [1m[34mSELECT  "rules".* FROM "rules" WHERE "rules"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  Rendering rules/edit.html.haml within layouts/application
+  Rendered rules/edit.html.haml within layouts/application (0.1ms)
+  Template rendering was prevented by rspec-rails. Use `render_views` to verify rendered view contents if necessary.
+Completed 200 OK in 1ms (Views: 0.5ms | ActiveRecord: 0.2ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.151856"], ["updated_at", "2021-02-08 18:50:26.151856"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$32NbpoqeU/Y7Hhh/ZatMtuWC9NfoYoPE0YfhH8OMTAWpZwHXOD0QC"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "rules"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.154011"], ["updated_at", "2021-02-08 18:50:26.154011"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#create as HTML
+  Parameters: {"account_rule"=>{"spending_limit"=>"123"}, "account_id"=>"34"}
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "rules" ("created_at", "updated_at", "spending_limit") VALUES ($1, $2, $3) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.156135"], ["updated_at", "2021-02-08 18:50:26.156135"], ["spending_limit", "123.0"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/34/rules
+Completed 302 Found in 2ms (ActiveRecord: 0.4ms)
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "rules"[0m
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.160762"], ["updated_at", "2021-02-08 18:50:26.160762"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$sG4sC3V9cQCJ8iPs30oCU.dTqleM8PU1BPOBUZUR7RgS3OAT4Pr.e"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.162739"], ["updated_at", "2021-02-08 18:50:26.162739"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#create as HTML
+  Parameters: {"account_rule"=>{"spending_limit"=>"123"}, "account_id"=>"35"}
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "rules" ("created_at", "updated_at", "spending_limit") VALUES ($1, $2, $3) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.164861"], ["updated_at", "2021-02-08 18:50:26.164861"], ["spending_limit", "123.0"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/35/rules
+Completed 302 Found in 2ms (ActiveRecord: 0.6ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.169494"], ["updated_at", "2021-02-08 18:50:26.169494"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$je5lDVjUWByAymBQm5HhueMZC5YFiGdKtWuFMC8gZbj/mlKgfStVS"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.1ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.171057"], ["updated_at", "2021-02-08 18:50:26.171057"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#create as HTML
+  Parameters: {"account_rule"=>{"spending_limit"=>"-1"}, "account_id"=>"36"}
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK TO SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/36/rules/new
+Completed 302 Found in 1ms (ActiveRecord: 0.2ms)
+  [1m[36mRule Load (0.1ms)[0m  [1m[34mSELECT  "rules".* FROM "rules" WHERE "rules"."spending_limit" = $1 LIMIT $2[0m  [["spending_limit", -1], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.177954"], ["updated_at", "2021-02-08 18:50:26.177954"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$NTQd1TsGAYZwPlT7bDExr.nW/2EyyKF84/zFh5yV51D2umI2hXpay"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.180487"], ["updated_at", "2021-02-08 18:50:26.180487"]]
+  [1m[35m (0.3ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#create as HTML
+  Parameters: {"account_rule"=>{"spending_limit"=>"-1"}, "account_id"=>"37"}
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK TO SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/37/rules/new
+Completed 302 Found in 1ms (ActiveRecord: 0.3ms)
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.187667"], ["updated_at", "2021-02-08 18:50:26.187667"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$HNHEQmFzGSp3FzUn3AOWt.UREvpGvtEA5j1qWxSlvNqzFxryMNW0m"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.189371"], ["updated_at", "2021-02-08 18:50:26.189371"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "rules" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.190664"], ["updated_at", "2021-02-08 18:50:26.190664"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#update as HTML
+  Parameters: {"account_rule"=>{"spending_limit"=>"1"}, "account_id"=>"38", "id"=>"5"}
+  [1m[36mRule Load (0.2ms)[0m  [1m[34mSELECT  "rules".* FROM "rules" WHERE "rules"."id" = $1 LIMIT $2[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[33mUPDATE "rules" SET "spending_limit" = $1, "updated_at" = $2 WHERE "rules"."id" = $3[0m  [["spending_limit", "1.0"], ["updated_at", "2021-02-08 18:50:26.193107"], ["id", 5]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/38/rules/5/edit
+Completed 302 Found in 3ms (ActiveRecord: 0.9ms)
+  [1m[36mRule Load (0.2ms)[0m  [1m[34mSELECT  "rules".* FROM "rules" WHERE "rules"."id" = $1 LIMIT $2[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.198435"], ["updated_at", "2021-02-08 18:50:26.198435"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$VUBJroa6t09NsZ.LTa2MNuxS5hcfz2IsFuh05obRbb0tu4nk5SxS6"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.200112"], ["updated_at", "2021-02-08 18:50:26.200112"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "rules" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.201275"], ["updated_at", "2021-02-08 18:50:26.201275"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Processing by RulesController#update as HTML
+  Parameters: {"account_rule"=>{"spending_limit"=>"-1"}, "account_id"=>"39", "id"=>"6"}
+  [1m[36mRule Load (0.3ms)[0m  [1m[34mSELECT  "rules".* FROM "rules" WHERE "rules"."id" = $1 LIMIT $2[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK TO SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/39/rules/6/edit
+Completed 302 Found in 2ms (ActiveRecord: 0.7ms)
+  [1m[36mRule Load (0.2ms)[0m  [1m[34mSELECT  "rules".* FROM "rules" WHERE "rules"."id" = $1 LIMIT $2[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.208845"], ["updated_at", "2021-02-08 18:50:26.208845"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$uCU8OA71Y5zzkgNmTDLmluypZnuhmRxM6hKALupv8iQFZOB3y7GQe"]]
+  [1m[35m (0.3ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.211252"], ["updated_at", "2021-02-08 18:50:26.211252"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (1.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.213406"], ["updated_at", "2021-02-08 18:50:26.213406"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.6ms)[0m  [1m[34mSELECT COUNT(*) FROM "transactions"[0m
+Processing by TransactionsController#create as HTML
+  Parameters: {"account"=>"3715014455794741", "summ"=>"100.0", "account_id"=>"40"}
+  [1m[35m (0.2ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 40], ["LIMIT", 1]]
+  [1m[35mSQL (0.5ms)[0m  [1m[32mINSERT INTO "transactions" ("user_id", "account_id", "remote_account_id", "summ", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["user_id", 51], ["account_id", 40], ["remote_account_id", "3715014455794741"], ["summ", 100.0], ["created_at", "2021-02-08 18:50:26.227510"], ["updated_at", "2021-02-08 18:50:26.227510"]]
+  [1m[35mSQL (0.3ms)[0m  [1m[33mUPDATE "accounts" SET "balance" = $1, "updated_at" = $2 WHERE "accounts"."id" = $3[0m  [["balance", 900.0], ["updated_at", "2021-02-08 18:50:26.228914"], ["id", 40]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."iban" = $1 LIMIT $2[0m  [["iban", 3715014455794741], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[33mUPDATE "accounts" SET "balance" = $1, "updated_at" = $2 WHERE "accounts"."id" = $3[0m  [["balance", 1100.0], ["updated_at", "2021-02-08 18:50:26.231065"], ["id", 41]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+Redirected to http://test.host/accounts/40
+Completed 302 Found in 13ms (ActiveRecord: 2.7ms)
+  [1m[35m (0.2ms)[0m  [1m[34mSELECT COUNT(*) FROM "transactions"[0m
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.237560"], ["updated_at", "2021-02-08 18:50:26.237560"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$/CBRmiX9jmsrDEhmOPdmvubGjvc14D2cr/dEfY1sNl7iE35slUBYu"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.239216"], ["updated_at", "2021-02-08 18:50:26.239216"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mUser Exists (0.3ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35m (0.2ms)[0m  [1m[31mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Exists (0.2ms)[0m  [1m[34mSELECT  1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "me@example.com"], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "users" ("created_at", "updated_at", "email", "encrypted_password") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["created_at", "2021-02-08 18:50:26.247289"], ["updated_at", "2021-02-08 18:50:26.247289"], ["email", "me@example.com"], ["encrypted_password", "$2a$04$S0LsFNglnv.AXaTE9iqZY.SW19phzaEylhAW.Gsitl2f7vbxvbim2"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.248818"], ["updated_at", "2021-02-08 18:50:26.248818"]]
+  [1m[35m (0.2ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "accounts" ("iban", "balance", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["iban", 3715014455794741], ["balance", 1000.0], ["created_at", "2021-02-08 18:50:26.250117"], ["updated_at", "2021-02-08 18:50:26.250117"]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mAccount Load (0.1ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 43], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[32mINSERT INTO "transactions" ("user_id", "account_id", "remote_account_id", "summ", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["user_id", 53], ["account_id", 43], ["remote_account_id", "3715014455794741"], ["summ", 100.0], ["created_at", "2021-02-08 18:50:26.251912"], ["updated_at", "2021-02-08 18:50:26.251912"]]
+  [1m[35mSQL (0.2ms)[0m  [1m[33mUPDATE "accounts" SET "balance" = $1, "updated_at" = $2 WHERE "accounts"."id" = $3[0m  [["balance", 900.0], ["updated_at", "2021-02-08 18:50:26.252722"], ["id", 43]]
+  [1m[36mAccount Load (0.2ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."iban" = $1 LIMIT $2[0m  [["iban", 3715014455794741], ["LIMIT", 1]]
+  [1m[35mSQL (0.2ms)[0m  [1m[33mUPDATE "accounts" SET "balance" = $1, "updated_at" = $2 WHERE "accounts"."id" = $3[0m  [["balance", 1100.0], ["updated_at", "2021-02-08 18:50:26.253968"], ["id", 44]]
+  [1m[35m (0.1ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mAccount Load (0.1ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 43], ["LIMIT", 1]]
+  [1m[36mAccount Load (0.1ms)[0m  [1m[34mSELECT  "accounts".* FROM "accounts" WHERE "accounts"."id" = $1 LIMIT $2[0m  [["id", 44], ["LIMIT", 1]]
+  [1m[35m (0.1ms)[0m  [1m[31mROLLBACK[0m
